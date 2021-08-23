@@ -14,7 +14,20 @@ class FileBackup:
                     path = shutil.copytree(fromD, toD, True)
                     return self.isNotBlank(path)
                 else:
-                    #
+                    resultFromD = self.getListFilesAndDir(fromD)
+                    resultToD = self.getListFilesAndDir(toD)
+                    return self.compareNCpy(resultFromD,resultToD)
+                    #for all files inside check for the ones that are not in the toD
+                    #for all of those that exist check the metadata for creation date if fromD is > toD replace
+                    #do it recursible for all paths
+        return False
+    
+    def compareNCpy(self,resultFromD,resultToD):
+        filesOnDirToCpy = list(set(resultFromD[0]) - set(resultToD[0]))
+        self.copyFiles(filesOnDirToCpy,resultToD[3])
+        for dirAct in resultFromD[1]:
+            newFromD = self.getListFilesAndDir(dirAct)
+            self.copyFiles(newFromD[1],resultToD[3] + os.path.sep + dirAct)
         return False
 
     def copyFiles(self, filesToCopy, dirToBack):
@@ -25,7 +38,7 @@ class FileBackup:
         finally:
             return False
 
-# Obtiene una lista de Archivos y directorios 
+    # Obtiene una lista de Archivos y directorios 
     def getListFilesAndDir(self, path):
         files = []
         directory = []
