@@ -1,30 +1,21 @@
 import os
+import re
 import shutil
 
-NAS_VAR = "TRUENAS"
-MUSIC_VAR = "Music"
-MOVIES_VAR = "Movies"
-APP_VAR = "Applications"
-DATA_VAR = "Data"
-TMP_VAR = "tmp"
-PIC_VAR = "Pictures"
-DIR_ARRAY = {MUSIC_VAR,MOVIES_VAR,APP_VAR,DATA_VAR,TMP_VAR,PIC_VAR}
-DIR_ARRAY_TEST = {MUSIC_VAR}
-BACKUP_DIR = "DIR"
-
 class FileBackup:
-    def main(self):
-        #win 
-        for directoryToCheck in DIR_ARRAY:
-            filesAndDir = self.getListFilesAndDir(os.path.sep + os.path.sep + NAS_VAR + os.path.sep + os.path.sep + directoryToCheck)
-            diffToCopy = self.compareOriginalWithBackUp(filesAndDir[0], directoryToCheck)
-            self.copyFiles(diffToCopy,filesAndDir[2])
-            self.getDirectories(filesAndDir[1])
 
-    def compareOriginalWithBackUp(self, arrayFiles, dirToBackUp):
-        filesAndDirBack = self.getListFilesAndDir(os.path.sep + BACKUP_DIR + os.path.sep + dirToBackUp)
-        diff = list(set(arrayFiles) - set(filesAndDirBack))
-        return diff
+    def main(self):
+        return False
+    
+    def startBackup(self, fromD, toD):
+        if self.isNotBlank(fromD) and self.isNotBlank(toD):
+            if os.path.exist(fromD):
+                if not os.path.exist(toD):
+                    path = shutil.copytree(fromD, toD, True)
+                    return self.isNotBlank(path)
+                else:
+                    #
+        return False
 
     def copyFiles(self, filesToCopy, dirToBack):
         try:
@@ -45,3 +36,9 @@ class FileBackup:
             dirP.extend(dirpath)
             break
         return files, directory, dirP
+    
+    def isBlank (self, myString):
+        return not (myString and myString.strip())
+    
+    def isNotBlank (self, myString):
+        return bool(myString and myString.strip())
