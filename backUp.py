@@ -16,10 +16,19 @@ class FileBackup:
                 else:
                     resultFromD = self.getListFilesAndDir(fromD)
                     resultToD = self.getListFilesAndDir(toD)
-                    return self.compareNCpy(resultFromD,resultToD)
                     #for all files inside check for the ones that are not in the toD
                     #for all of those that exist check the metadata for creation date if fromD is > toD replace
                     #do it recursible for all paths
+                    return self.recursiveCopy(resultFromD,resultToD)
+        return False
+    
+    def recursiveCopy(self, fromD, toD):
+        if fromD[2]:
+             path = shutil.copytree(fromD[2],toD[0])
+        if fromD[1]:
+            for dirActive in fromD[1]:
+                newFromD = self.getListFilesAndDir(fromD[0]+os.path.sep+dirActive)
+                self.startBackup(newFromD,)
         return False
     
     def compareNCpy(self,resultFromD,resultToD):
